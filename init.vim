@@ -15,7 +15,7 @@ set cc=
 " Turn on syntax highlighting.
 syntax on
 set t_Co=256
-
+set nospell
 " Disable the default Vim startup message.
 set shortmess+=I
 " get red of the column line
@@ -35,6 +35,7 @@ Plug 'sheerun/vim-polyglot'
 " code actions
 Plug 'weilbith/nvim-code-action-menu'
 " Declare the list of plugins.
+Plug 'mattia72/vim-delphi' 
 Plug 'tpope/vim-sensible'
 Plug 'junegunn/seoul256.vim'
 Plug 'preservim/nerdtree'
