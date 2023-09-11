@@ -20,12 +20,20 @@ set nospell
 set shortmess+=I
 " get red of the column line
 set colorcolumn=0
+filetype plugin on
 hi ColorColumn ctermbg=8
 " Start NERDTree when Vim is started without file arguments.
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
+"autocmd StdinReadPre * let s:std_in=1
+
+"autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
+
 " Show line numbers.
 set number
+"set vimwiki to markdown
+let g:vimwiki_list = [{'path': '~/vimwiki/',
+                      \ 'syntax': 'markdown', 'ext': '.md'}]
+let g:vimwiki_global_ext = 0
+autocmd VimEnter * let g:vimwiki_syntaxlocal_vars['markdown']['Link1'] = g:vimwiki_syntaxlocal_vars['default']['Link1']
 " Plugins will be downloaded under the specified directory.
 call plug#begin(has('nvim') ? stdpath('data') . '/plugged' : '~/.vim/plugged')
 "Mrkdown Preview
@@ -42,6 +50,9 @@ Plug 'preservim/nerdtree'
 Plug 'dart-lang/dart-vim-plugin'
 Plug 'thosakwe/vim-flutter'
 Plug 'morhetz/gruvbox'
+" vim wiki
+Plug 'vimwiki/vimwiki'
+ 
 " File and folder management
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -63,6 +74,12 @@ Plug 'vim-airline/vim-airline'
 " Theme
 Plug 'morhetz/gruvbox'
 
+" React snippets
+Plug 'mlaursen/vim-react-snippets'
+Plug 'cristianoliveira/vim-react-html-snippets'
+
+
+
 call plug#end()
 " markdown preview config
 " set to 1, nvim will open the preview window after entering the markdown buffer
@@ -79,7 +96,6 @@ let g:mkdp_auto_close = 1
 " move the cursor
 " default: 0
 let g:mkdp_refresh_slow = 0
-
 " set to 1, the MarkdownPreview command can be use for all files,
 " by default it can be use in markdown file
 " default: 0
@@ -220,6 +236,7 @@ highlight CocErrorFloat ctermfg=Red  guifg=#ff0000
 " for movement, rather than using more efficient movement commands, is also a
 " bad habit. The former is enforceable through a .vimrc, while we don't know
 " how to prevent the latter.
+noremap <C-d> :!bash<cr>
 " Do this in normal mode...
 nnoremap <Left>  :echoe "Use h"<CR>
 nnoremap <Right> :echoe "Use l"<CR>
