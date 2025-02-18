@@ -1,4 +1,5 @@
-"" Comments in Vimscript start with a `"`.
+" Comments in Vimscript start with a `"`.
+ let g:python3_host_prog = '/usr/bin/python3'
 
 " If you open this file in Vim, it'll be syntax highlighted for you.
 
@@ -15,17 +16,16 @@ set cc=
 " Turn on syntax highlighting.
 syntax on
 set t_Co=256
-set nospell
 " Disable the default Vim startup message.
 set shortmess+=I
-" get red of the column line
-set colorcolumn=0
-filetype plugin on
+set shell=/usr/bin/zsh
+" use system clipboard
+set clipboard+=unnamedplus
+
 hi ColorColumn ctermbg=8
 " Start NERDTree when Vim is started without file arguments.
 "autocmd StdinReadPre * let s:std_in=1
-
-"autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
+auto BufEnter *.md set nospell
 
 " Show line numbers.
 set number
@@ -33,22 +33,27 @@ set number
 let g:vimwiki_list = [{'path': '~/vimwiki/',
                       \ 'syntax': 'markdown', 'ext': '.md'}]
 let g:vimwiki_global_ext = 0
-autocmd VimEnter * let g:vimwiki_syntaxlocal_vars['markdown']['Link1'] = g:vimwiki_syntaxlocal_vars['default']['Link1']
 " Plugins will be downloaded under the specified directory.
 call plug#begin(has('nvim') ? stdpath('data') . '/plugged' : '~/.vim/plugged')
+"Codeium
+Plug 'Exafunction/codeium.vim', { 'branch': 'main' }
 "Mrkdown Preview
+Plug 'mzlogin/vim-markdown-toc'
+"Mrkdown Toc
 Plug 'iamcco/markdown-preview.nvim'
 "colors
 Plug 'sheerun/vim-polyglot'
 " code actions
 Plug 'weilbith/nvim-code-action-menu'
-" Declare the list of plugins.
+"vim-plug
+Plug 'szymonmaszke/vimpyter' 
+" tree sitter
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+" Declare the list of plugins.-- Bootstrap lazy.nvim
 Plug 'mattia72/vim-delphi' 
 Plug 'tpope/vim-sensible'
 Plug 'junegunn/seoul256.vim'
 Plug 'preservim/nerdtree'
-Plug 'dart-lang/dart-vim-plugin'
-Plug 'thosakwe/vim-flutter'
 Plug 'morhetz/gruvbox'
 " vim wiki
 Plug 'vimwiki/vimwiki'
@@ -69,18 +74,17 @@ Plug 'HerringtonDarkholme/yats.vim'
 Plug 'maxmellon/vim-jsx-pretty'
 "code actions
 Plug 'weilbith/nvim-code-action-menu'
-" Git
-Plug 'vim-airline/vim-airline'
 " Theme
 Plug 'morhetz/gruvbox'
 
 " React snippets
 Plug 'mlaursen/vim-react-snippets'
 Plug 'cristianoliveira/vim-react-html-snippets'
-
-
+" catpuccin theme
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 
 call plug#end()
+colorscheme catppuccin-mocha
 " markdown preview config
 " set to 1, nvim will open the preview window after entering the markdown buffer
 " default: 0
@@ -194,7 +198,8 @@ let g:coc_global_extensions = [
 set relativenumber
 
 " Always show the status line at the bottom, even if you only have one window open.
-set laststatus=2
+"s et laststatus=2
+set statusline=%f\ %y\ %m\ %r\ %=%-14.(%l,%c%V%)\ %P
 
 " The backspace key has slightly unintuitive behavior by default. For example,
 " by default, you can't backspace before the insertion point set with 'i'.
@@ -228,30 +233,21 @@ set noerrorbells visualbell t_vb=
 " sometimes be convenient.
 set mouse+=a
 " changiing he color of the menu
-highlight CocHintFloat ctermfg=Red  guifg=#ff0000 
-highlight CocFloating ctermfg=Red  guifg=#ff0000 
-highlight CocErrorFloat ctermfg=Red  guifg=#ff0000 
+" highlight CocHintFloat ctermfg=Red  guifg=#ff0000 
+" highlight CocFloating ctermfg=Red  guifg=#ff0000 
+" highlight CocErrorFloat ctermfg=Red  guifg=#ff0000 
 " Try to prevent bad habits like using the arrow keys for movement. This is
 " not the only possible bad habit. For example, holding down the h/j/k/l keys
 " for movement, rather than using more efficient movement commands, is also a
 " bad habit. The former is enforceable through a .vimrc, while we don't know
 " how to prevent the latter.
 noremap <C-d> :!bash<cr>
-" Do this in normal mode...
-nnoremap <Left>  :echoe "Use h"<CR>
-nnoremap <Right> :echoe "Use l"<CR>
-nnoremap <Up>    :echoe "Use k"<CR>
-nnoremap <Down>  :echoe "Use j"<CR>
-" ...and in insert mode
-inoremap <Left>  <ESC>:echoe "Use h"<CR>
-inoremap <Right> <ESC>:echoe "Use l"<CR>
-inoremap <Up>    <ESC>:echoe "Use k"<CR>
-inoremap <Down>  <ESC>:echoe "Use j"<CR>
 " Nerdtree shotrcuts
 nnoremap <leader>n :NERDTreeFocus<CR>
-nnoremap <C-n> :NERDTree<CR>
-nnoremap <C-t> :NERDTreeToggle<CR>
+nnoremap <C-n> :NERDTreeToggle<CR>
+nnoremap <C-t> :NERDTree<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
+au filetype vimwiki silent! iunmap <buffer> <Tab>
 " Some servers have issues with backup files, see #649.
 set nobackup
 set nowritebackup
@@ -382,8 +378,6 @@ command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.org
 
 " Add (Neo)Vim's native statusline support.
 " NOTE: Please see `:h coc-status` for integrations with external plugins that
-" provide custom statusline: lightline.vim, vim-airline.
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " Mappings for CoCList
 " Show all diagnostics.
@@ -403,3 +397,130 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
+" lines to save folding
+autocmd bufWinleave *.* mkview
+" autocmd bufWinEnter *.* silent loadview
+autocmd BufWinEnter *.* if filereadable(expand('%:p:h') . '/.vimview') | silent loadview | endif
+
+
+
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  -- A list of parser names, or "all" (the five listed parsers should always be installed)
+  ensure_installed = { "c","r", "lua", "vim", "vimdoc", "query","python","bash" },
+
+  -- Install parsers synchronously (only applied to `ensure_installed`)
+  sync_install = false,
+
+  -- Automatically install missing parsers when entering buffer
+  -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
+  auto_install = true,
+
+  -- List of parsers to ignore installing (or "all")
+  ignore_install = { "javascript" },
+
+  ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
+  -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
+
+  highlight = {
+    enable = true,
+
+    -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+    -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+    -- the name of the parser)
+    -- list of language that will be disabled
+    disable = { "c", "rust" },
+    -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
+    disable = function(lang, buf)
+        local max_filesize = 100 * 1024 -- 100 KB
+        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+        if ok and stats and stats.size > max_filesize then
+            return true
+        end
+    end,
+
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+}
+require'nvim-treesitter.configs'.setup {
+  highlight = {
+    enable = true,
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+}
+EOF
+
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  highlight = {
+    enable = true,
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+}
+EOF
+
+lua <<EOF
+require("catppuccin").setup({
+    flavour = "auto", -- latte, frappe, macchiato, mocha
+    background = { -- :h background
+        light = "latte",
+        dark = "mocha",
+    },
+    transparent_background = true, -- disables setting the background color.
+    show_end_of_buffer = false, -- shows the '~' characters after the end of buffers
+    term_colors = false, -- sets terminal colors (e.g. `g:terminal_color_0`)
+    dim_inactive = {
+        enabled = false, -- dims the background color of inactive window
+        shade = "dark",
+        percentage = 0.15, -- percentage of the shade to apply to the inactive window
+    },
+    no_italic = false, -- Force no italic
+    no_bold = false, -- Force no bold
+    no_underline = false, -- Force no underline
+    styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
+        comments = { "italic" }, -- Change the style of comments
+        conditionals = { "italic" },
+        loops = {},
+        functions = {},
+        keywords = {},
+        strings = {},
+        variables = {},
+        numbers = {},
+        booleans = {},
+        properties = {},
+        types = {},
+        operators = {},
+        -- miscs = {}, -- Uncomment to turn off hard-coded styles
+    },
+    color_overrides = {},
+    custom_highlights = {},
+    default_integrations = true,
+    integrations = {
+        cmp = true,
+        gitsigns = true,
+        nvimtree = true,
+        treesitter = true,
+        notify = false,
+        mini = {
+            enabled = true,
+            indentscope_color = "",
+        },
+        -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
+    },
+})
+
+-- setup must be called before loading
+vim.cmd.colorscheme "catppuccin"
+EOF
